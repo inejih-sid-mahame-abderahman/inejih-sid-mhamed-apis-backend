@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>INEJIH • Phase 0, 1, 3, 6, 8 | ALMARBAT API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+        * { transition: all 0.2s ease; }
+        body { font-family: 'Cairo', system-ui; background: #f8fafc; }
+        .developer-badge { background: linear-gradient(135deg, #1f6e43, #0a3622); }
+        .screen-card { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; }
+        .screen-card:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 25px 35px -12px rgba(0,0,0,0.2); }
+        .phase-header { border-right: 8px solid #1f6e43; background: linear-gradient(90deg, transparent, #f0fdf4); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #1f6e43; border-radius: 10px; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+        .animate-entry { animation: fadeSlide 0.4s ease-out; }
+    </style>
+</head>
+<body>
+
+<div class="bg-gradient-to-r from-emerald-900 to-emerald-700 text-white shadow-2xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-user-astronaut text-4xl drop-shadow"></i>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight">INEJIH • DEV</h1>
+                <p class="text-xs opacity-80">Phases: 0 (Role & Signup), 1, 3, 6, 8, 11 | ALMARBAT API</p>
+            </div>
+        </div>
+        <div class="developer-badge rounded-full px-6 py-2 text-center">
+            <div class="font-bold text-sm">🎯 INEJIH</div>
+            <div class="text-xs opacity-90">Lead Developer</div>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-5 pt-8 pb-4">
+    <div class="flex flex-wrap gap-3 mb-8" id="phaseFilterButtons"></div>
+</div>
+
+<div id="screensContainer" class="max-w-7xl mx-auto px-5 pb-16"></div>
+
+<div id="techModal" class="fixed inset-0 bg-black/85 z-[9999] hidden items-center justify-center p-4 backdrop-blur-sm" onclick="if(event.target===this) closeTechModal()">
+    <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-entry">
+        <div class="bg-gradient-to-r from-emerald-50 to-white px-6 py-4 border-b flex justify-between items-center sticky top-0">
+            <div class="flex items-center gap-3 flex-wrap">
+                <span id="modalPhaseTag" class="bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-full"></span>
+                <h2 id="modalTitle" class="text-xl md:text-2xl font-bold"></h2>
+            </div>
+            <button onclick="closeTechModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-red-100 text-red-600">✕</button>
+        </div>
+        <div class="flex flex-col md:flex-row overflow-auto flex-1">
+            <div class="md:w-1/2 bg-gray-900 flex items-center justify-center p-6">
+                <img id="modalImg" class="max-h-[55vh] md:max-h-[70vh] w-auto object-contain rounded-xl shadow-2xl border border-white/20" alt="screen preview">
+            </div>
+            <div class="md:w-1/2 p-6 space-y-5 overflow-y-auto">
+                <div>
+                    <h3 class="text-emerald-800 font-bold text-sm uppercase tracking-wider"><i class="fa-regular fa-file-lines"></i> الوصف الوظيفي</h3>
+                    <p id="modalDesc" class="text-slate-700 mt-1 leading-relaxed"></p>
+                </div>
+                <div class="bg-slate-900 rounded-2xl p-4">
+                    <h3 class="text-white font-bold text-sm mb-3"><i class="fa-solid fa-plug"></i> Django DRF API Endpoints</h3>
+                    <div id="modalApis" class="space-y-3"></div>
+                </div>
+                <div>
+                    <h3 class="text-emerald-800 font-bold text-sm uppercase tracking-wider"><i class="fa-solid fa-database"></i> النماذج المرتبطة</h3>
+                    <div id="modalModels" class="flex flex-wrap gap-2 mt-2"></div>
+                </div>
+                <div class="bg-gradient-to-r from-slate-100 to-emerald-50 p-4 rounded-2xl">
+                    <h3 class="font-bold text-emerald-800"><i class="fa-solid fa-diagram-project"></i> تدفق البيانات</h3>
+                    <p id="modalFlow" class="text-sm text-slate-800 mt-2 font-mono"></p>
+                </div>
+                <button onclick="closeTechModal()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-2xl font-bold">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const phasesMeta = [
+    { key: "phase0", name: "🚀 PHASE 0: المصادقة والتسجيل", icon: "fa-rocket", color: "emerald" },
+    { key: "phase1", name: "🔔 PHASE 1: نظام الإشعارات", icon: "fa-bell", color: "blue" },
+   
+    { key: "phase3", name: "💰 PHASE 3: الدفع عبر Bankily", icon: "fa-credit-card", color: "purple" },
+  
+    { key: "phase6", name: "🚚 PHASE 6: اللوجستيات والتوصيل", icon: "fa-truck-fast", color: "sky" },
+    
+    { key: "phase8", name: "🛍️ PHASE 8: الشراء الجماعي", icon: "fa-cart-shopping", color: "amber" },
+   
+    { key: "phase11", name: "📜 PHASE 11: سجل الطلبات و QR Code", icon: "fa-history", color: "green" },
+  
+];
+
+const screensDB = [
+    // PHASE 0
+ 
+    { id: 2, src: "commun screens between all users signup screen_role selection step 1.jpeg", title: "اختيار نوع الحساب", phase: "phase0", desc: "اختيار الدور (بائع - مشتري - سائق - جزار)", apis: [{ method: "POST", path: "/auth/register/", desc: "بدء التسجيل مع الدور" }], models: ["Utilisateur"], flow: "Role selection stored → proceed to registration" },
+    { id: 3, src: "commun screens between all users signup screen_signup step 2.jpeg", title: "إنشاء حساب جديد", phase: "phase0", desc: "إدخال البيانات الشخصية", apis: [{ method: "POST", path: "/auth/register/", desc: "إنشاء حساب جديد" }], models: ["Utilisateur", "Profile*"], flow: "Create user + create profile based on role" },
+    
+
+    // PHASE 1: Notifications
+    { id: 7, src: "achetuer screens notification screen.jpeg", title: "إشعارات المشتري", phase: "phase1", desc: "جميع الإشعارات الخاصة بالعميل", apis: [{ method: "GET", path: "/notifications/", desc: "قائمة الإشعارات" }], models: ["Notification"], flow: "Real-time + history" },
+    { id: 8, src: "driver screens notification screen.jpeg", title: "إشعارات السائق", phase: "phase1", desc: "تنبيهات المهام والعاجل", apis: [{ method: "GET", path: "/notifications/driver/", desc: "إشعارات السائق" }], models: ["Notification", "Livraison"], flow: "Active task alerts" },
+    { id: 9, src: "saller screens notification screen.jpeg", title: "إشعارات البائع", phase: "phase1", desc: "طلبات جديدة ومدفوعات", apis: [{ method: "GET", path: "/notifications/seller/", desc: "إشعارات البائع" }], models: ["Notification", "Commande"], flow: "New order + payment received" },
+    { id: 10, src: "bucher screens notification screen.jpeg", title: "إشعارات الجزار", phase: "phase1", desc: "طلبات التجهيز", apis: [{ method: "GET", path: "/notifications/butcher/", desc: "إشعارات الجزار" }], models: ["Notification", "Preparation"], flow: "New preparation requests" },
+
+   
+    // PHASE 8: Group Buying
+    { id: 16, src: "achetuer screens group buying section animal  details  screen.jpeg", title: "تفاصيل الشراء الجماعي", phase: "phase8", desc: "عرض الحيوان في المجموعة", apis: [{ method: "GET", path: "/group-buy/{id}/", desc: "تفاصيل المجموعة" }], models: ["GroupeAchat"], flow: "Group buy details" },
+    { id: 17, src: "achetuer screens group buying section group buying details  screen.jpeg", title: "تفاصيل المشاركين في المجموعة", phase: "phase8", desc: "المبلغ المجموع والمشاركون", apis: [{ method: "POST", path: "/group-buy/{id}/join/", desc: "الانضمام للمجموعة" }], models: ["GroupeAchat", "ParticipationGroupe"], flow: "Join group buying" },
+
+    // PHASE 11: Order History
+    { id: 18, src: "achetuer screens orders commands history screen.jpeg", title: "سجل الطلبات", phase: "phase11", desc: "تاريخ الطلبات السابقة", apis: [{ method: "GET", path: "/orders/history/", desc: "سجل الطلبات" }], models: ["Commande"], flow: "Order history with status" },
+     { id: 39, src: "achetuer screens animal qr code screen for the delivery guy to scan screen.jpeg", title: "إدارة الشراء للبائع", phase: "phase11", desc: "عرض وإدارة طلبات الشراء", apis: [{ method: "GET", path: "/seller/purchases/", desc: "قائمة الشراء" }], models: ["Purchase"], flow: "Seller purchase management" },
+    // PHASE 6: Delivery & Tracking
+    { id: 19, src: "achetuer screens live map tracking screen.jpeg", title: "تتبع التوصيل المباشر", phase: "phase6", desc: "خريطة حية للسائق", apis: [{ method: "GET", path: "/deliveries/track/{id}/", desc: "تتبع الطلب" }, { method: "WS", path: "/ws/delivery/{id}/", desc: "WebSocket tracking" }], models: ["Livraison"], flow: "Live location tracking" },
+    { id: 20, src: "achetuer screens animal qr code screen for the delivery guy to scan screen.jpeg", title: "شاشة QR Code للتوصيل", phase: "phase6", desc: "رمز QR للسائق", apis: [{ method: "GET", path: "/deliveries/{id}/qr/", desc: "عرض QR" }], models: ["Livraison"], flow: "QR code for delivery confirmation" },
+
+    // PHASE 3: Bankily Payment
+    { id: 21, src: "achetuer screens animal buying process benkily payments step 1screen.jpeg", title: "Bankily - بدء الدفع", phase: "phase3", desc: "عرض كود الدفع", apis: [{ method: "POST", path: "/payments/bankily/initiate/", desc: "إنشاء عملية دفع" }], models: ["Paiement", "BankilyTransaction"], flow: "Generate Bankily code" },
+    { id: 22, src: "achetuer screens animal buying process benkily payments step 2screen.jpeg", title: "Bankily - إدخال الرمز", phase: "phase3", desc: "تأكيد الدفع عبر Bankily", apis: [{ method: "POST", path: "/payments/bankily/verify/", desc: "التحقق من الدفع" }], models: ["BankilyTransaction"], flow: "Verify payment code" },
+    { id: 23, src: "achetuer screens animal buing peiments process the payments confirmations  screen.jpeg", title: "تأكيد نجاح الدفع", phase: "phase3", desc: "شاشة النجاح بعد الدفع", apis: [{ method: "GET", path: "/payments/{id}/status/", desc: "حالة الدفع" }], models: ["Paiement"], flow: "Payment confirmed → update order status" },
+
+  
+    // PHASE 6: Driver
+    { id: 31, src: "driver screens driver home screen also where he sees all assigned missions.jpeg", title: "مهام السائق", phase: "phase6", desc: "المهام المسندة", apis: [{ method: "GET", path: "/driver/missions/", desc: "قائمة المهام" }], models: ["Livraison"], flow: "Assigned deliveries" },
+    { id: 32, src: "driver screens qr code driver mission details screen.jpeg", title: "تفاصيل المهمة", phase: "phase6", desc: "معلومات البائع والمشتري", apis: [{ method: "GET", path: "/driver/missions/{id}/", desc: "تفاصيل المهمة" }], models: ["Livraison", "Commande"], flow: "Mission details" },
+    { id: 33, src: "driver screens qr code saning screen for the bucher saller and bueyr users screen.jpeg", title: "مسح رمز QR للتسليم", phase: "phase6", desc: "مسح QR عند البائع أو الجزار أو المشتري", apis: [{ method: "POST", path: "/driver/scan/", desc: "معالجة مسح QR" }], models: ["DeliveryScanEvent"], flow: "Scan → update delivery status" },
+    { id: 34, src: "driver screens driver live map.jpeg", title: "مسح رمز QR للتسليم", phase: "phase6", desc: "مسح QR عند البائع أو الجزار أو المشتري", apis: [{ method: "POST", path: "/driver/scan/", desc: "معالجة مسح QR" }], models: ["DeliveryScanEvent"], flow: "Scan → update delivery status" },
+
+   
+    
+];
+let currentPhaseFilter = "all";
+
+function renderFilters() {
+    const container = document.getElementById("phaseFilterButtons");
+    const myPhases = ["phase0", "phase1", "phase3", "phase6", "phase8", "phase11"];
+    const filteredPhases = phasesMeta.filter(p => myPhases.includes(p.key));
+    container.innerHTML = `
+        <button onclick="setPhaseFilter('all')" class="px-6 py-3 rounded-full font-bold transition-all ${currentPhaseFilter==='all' ? 'bg-emerald-700 text-white shadow-lg' : 'bg-white border text-slate-700'}">
+            جميع شاشاتي (${screensDB.length})
+        </button>
+        ${filteredPhases.map(p => `
+            <button onclick="setPhaseFilter('${p.key}')" class="px-6 py-3 rounded-full font-bold transition-all ${currentPhaseFilter===p.key ? 'bg-emerald-700 text-white shadow-lg' : 'bg-white border text-slate-700'}">
+                ${p.name}
+            </button>
+        `).join('')}
+    `;
+}
+
+function setPhaseFilter(phase) {
+    currentPhaseFilter = phase;
+    renderFilters();
+    renderScreens();
+}
+
+function renderScreens() {
+    let filtered = currentPhaseFilter === "all" ? screensDB : screensDB.filter(s => s.phase === currentPhaseFilter);
+    const container = document.getElementById("screensContainer");
+    if (filtered.length === 0) { container.innerHTML = `<div class="text-center p-20 text-slate-500">لا توجد شاشات في هذا الفلتر</div>`; return; }
+    const grouped = {};
+    filtered.forEach(s => { if (!grouped[s.phase]) grouped[s.phase] = []; grouped[s.phase].push(s); });
+    let html = '';
+    phasesMeta.forEach(phaseInfo => {
+        const group = grouped[phaseInfo.key];
+        if (!group || group.length === 0) return;
+        html += `<div class="mb-16"><div class="phase-header pr-6 mb-6 p-5 rounded-2xl"><h2 class="text-2xl font-black flex items-center gap-4"><i class="fa-solid ${phaseInfo.icon} text-3xl text-emerald-600"></i>${phaseInfo.name} <span class="text-emerald-600">(${group.length})</span></h2></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">`;
+        group.forEach(screen => {
+            html += `<div class="screen-card bg-white rounded-3xl overflow-hidden shadow" onclick='showTechModal(${JSON.stringify(screen)})'><img src="${screen.src}" class="w-full aspect-[9/19] object-cover" alt="${screen.title}" onerror="this.src='https://placehold.co/300x570?text=${encodeURIComponent(screen.title)}'"><div class="p-5"><h3 class="font-bold text-lg leading-tight">${screen.title}</h3><p class="text-sm text-slate-600 mt-2 line-clamp-3">${screen.desc}</p></div></div>`;
+        });
+        html += `</div></div>`;
+    });
+    container.innerHTML = html;
+}
+
+window.showTechModal = function(screen) {
+    document.getElementById("modalTitle").innerText = screen.title;
+    document.getElementById("modalImg").src = screen.src;
+    document.getElementById("modalDesc").innerText = screen.desc;
+    const phaseObj = phasesMeta.find(p => p.key === screen.phase);
+    document.getElementById("modalPhaseTag").innerHTML = `<i class="fa-solid ${phaseObj?.icon || 'fa-circle'}"></i> ${phaseObj?.name || screen.phase}`;
+    let apisHTML = '';
+    if (screen.apis && screen.apis.length > 0) {
+        apisHTML = screen.apis.map(api => `<div class="flex gap-3 items-start"><span class="badge-${api.method.toLowerCase() || 'get'} text-white text-xs font-bold px-3 py-1 rounded">${api.method}</span><div><code class="text-emerald-600 font-medium">/api/v1${api.path}</code><p class="text-xs text-slate-500 mt-1">${api.desc}</p></div></div>`).join('');
+    } else { apisHTML = '<p class="text-slate-400">لم يتم تحديد APIs بعد</p>'; }
+    document.getElementById("modalApis").innerHTML = apisHTML;
+    document.getElementById("modalModels").innerHTML = (screen.models || []).map(m => `<span class="bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-2xl text-sm">${m}</span>`).join('');
+    document.getElementById("modalFlow").innerText = screen.flow || "تدفق البيانات يتم تحديده حسب المتطلبات النهائية";
+    const modal = document.getElementById("techModal");
+    modal.classList.remove("hidden");
+    modal.style.display = "flex";
+};
+
+window.closeTechModal = function() {
+    const modal = document.getElementById("techModal");
+    modal.style.display = "none";
+    modal.classList.add("hidden");
+};
+
+function init() { renderFilters(); renderScreens(); }
+init();
+</script>
+</body>
+</html>
