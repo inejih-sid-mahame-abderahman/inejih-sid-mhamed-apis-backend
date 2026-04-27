@@ -92,7 +92,7 @@ const phasesMeta = [
     { key: "phase6", name: "🚚 PHASE 6: اللوجستيات والتوصيل", icon: "fa-truck-fast", color: "sky" },
     
     { key: "phase8", name: "🛍️ PHASE 8: الشراء الجماعي", icon: "fa-cart-shopping", color: "amber" },
-   
+   { key: "phase12", name: "📊 PHASE 12: إدارة الشراء (Admin Purchase Management)", icon: "fa-chart-line", color: "purple" },
     { key: "phase11", name: "📜 PHASE 11: سجل الطلبات و QR Code", icon: "fa-history", color: "green" },
   
 ];
@@ -134,7 +134,142 @@ const screensDB = [
     { id: 33, src: "driver screens qr code saning screen for the bucher saller and bueyr users screen.jpeg", title: "مسح رمز QR للتسليم", phase: "phase6", desc: "مسح QR عند البائع أو الجزار أو المشتري", apis: [{ method: "POST", path: "/driver/scan/", desc: "معالجة مسح QR" }], models: ["DeliveryScanEvent"], flow: "Scan → update delivery status" },
     { id: 34, src: "driver screens driver live map.jpeg", title: "مسح رمز QR للتسليم", phase: "phase6", desc: "مسح QR عند البائع أو الجزار أو المشتري", apis: [{ method: "POST", path: "/driver/scan/", desc: "معالجة مسح QR" }], models: ["DeliveryScanEvent"], flow: "Scan → update delivery status" },
 
+      // PHASE 12: Admin Purchase Management
+   { 
+        id: 41, 
+        src: "Admin_pages web_dashboard dahsbaord page.png", 
+        title: "لوحة تحكم إدارة المشتريات (Admin)", 
+        phase: "phase12", 
+        desc: "لوحة تحكم متقدمة للمشرف تشمل عمليات الشراء، المدفوعات، الحالات، وتحليلات المبيعات", 
+        apis: [
+            { method: "GET", path: "/admin/purchases/", desc: "قائمة جميع عمليات الشراء مع فلاتر متقدمة" },
+            { method: "GET", path: "/admin/purchases/{id}/", desc: "تفاصيل عملية شراء محددة" },
+            { method: "PATCH", path: "/admin/purchases/{id}/status/", desc: "تحديث حالة الشراء (معلق / مؤكد / ملغي / مكتمل)" },
+            { method: "DELETE", path: "/admin/purchases/{id}/", desc: "حذف عملية شراء (استثنائي)" },
+            { method: "GET", path: "/admin/purchases/stats/", desc: "إحصائيات المشتريات (الإيرادات، عدد الطلبات، متوسط الأسعار)" },
+            { method: "GET", path: "/admin/payments/", desc: "جميع المدفوعات المرتبطة بالمشتريات" },
+            { method: "POST", path: "/admin/purchases/export/", desc: "تصدير بيانات المشتريات CSV/PDF" }
+        ], 
+        models: ["AdminPurchaseLog", "Commande", "Paiement", "Utilisateur", "Animal"], 
+        flow: "يقوم المشرف بمراقبة جميع صفقات الشراء، تحديث الحالات يدويًا عند الضرورة، عرض التقارير، وإدارة النزاعات أو الاستردادات." 
+    },
    
+    { 
+        id: 42, 
+        src: "Admin_pages web_dashboard admin login page.png.jpeg", 
+        title: "تحليلات وإحصائيات المشتريات", 
+        phase: "phase12", 
+        desc: "لوحة تحليلية متكاملة للمبيعات اليومية، الشهرية، وأفضل البائعين والمنتجات", 
+        apis: [
+            { method: "GET", path: "/admin/analytics/sales/", desc: "تحليلات المبيعات اليومية/الشهرية/السنوية" },
+            { method: "GET", path: "/admin/analytics/top-sellers/", desc: "أفضل البائعين حسب المبيعات" },
+            { method: "GET", path: "/admin/analytics/top-animals/", desc: "الحيوانات الأكثر مبيعًا" },
+            { method: "GET", path: "/admin/analytics/revenue/", desc: "تقرير الإيرادات مع الضرائب والعمولات" }
+        ], 
+        models: ["AnalyticsReport", "Commande", "Paiement", "VendeurCommission"], 
+        flow: "يتم احتساب الإحصائيات تلقائيًا من قاعدة البيانات وعرضها برسوم بيانية تفاعلية للمشرف." 
+    },
+   
+    { 
+        id: 43, 
+        src: "Admin_pages web_dashboard admin otp verificaiton page.png.jpeg", 
+        title: "إدارة الاستردادات والنزاعات", 
+        phase: "phase12", 
+        desc: "مراقبة طلبات الاسترداد، النزاعات بين البائع والمشتري، واتخاذ القرارات الإدارية", 
+        apis: [
+            { method: "GET", path: "/admin/disputes/", desc: "قائمة جميع النزاعات المفتوحة" },
+            { method: "POST", path: "/admin/disputes/{id}/resolve/", desc: "حل النزاع لصالح طرف" },
+            { method: "POST", path: "/admin/refunds/approve/", desc: "الموافقة على طلب استرداد" },
+            { method: "POST", path: "/admin/refunds/reject/", desc: "رفض طلب استرداد" }
+        ], 
+        models: ["Dispute", "RefundRequest", "Commande"], 
+        flow: "يتيح للمشرف متابعة النزاعات، التواصل مع الأطراف، وإصدار أحكام استرداد الأموال إذا لزم الأمر." 
+    },
+   
+    { 
+        id: 44, 
+        src: "Admin_pages web_dashboard drivers manegments page.png", 
+        title: "إجراءات جماعية على المشتريات", 
+        phase: "phase12", 
+        desc: "تحديد عدة عمليات شراء وتطبيق إجراءات جماعية (تغيير حالة، إرسال إشعار، حذف مؤقت)", 
+        apis: [
+            { method: "POST", path: "/admin/purchases/bulk-status/", desc: "تحديث حالة مجموعة من الطلبات دفعة واحدة" },
+            { method: "POST", path: "/admin/purchases/bulk-notify/", desc: "إرسال إشعار جماعي للمشترين" },
+            { method: "POST", path: "/admin/purchases/bulk-export/", desc: "تصدير مجموعة محددة من المشتريات" }
+        ], 
+        models: ["Commande", "Notification"], 
+        flow: "المشرف يختار مجموعة من الطلبات > إجراء جماعي > تطبيق التغيير." 
+    },
+   
+    { 
+        id: 45, 
+        src: "Admin_pages web_dashboard listings manegments page.png", 
+        title: "سجل التدقيق والمراجعة", 
+        phase: "phase12", 
+        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
+        apis: [
+            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
+            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
+        ], 
+        models: ["AuditLog", "AdminAction"], 
+        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
+    },
+   
+    { 
+        id: 46, 
+        src: "Admin_pages web_dashboard payments manegments page.png", 
+        title: "سجل التدقيق والمراجعة", 
+        phase: "phase12", 
+        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
+        apis: [
+            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
+            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
+        ], 
+        models: ["AuditLog", "AdminAction"], 
+        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
+    },
+   
+    { 
+        id: 47, 
+        src: "Admin_pages web_dashboard preperation and buchers manegments page.png", 
+        title: "سجل التدقيق والمراجعة", 
+        phase: "phase12", 
+        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
+        apis: [
+            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
+            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
+        ], 
+        models: ["AuditLog", "AdminAction"], 
+        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
+    },
+   
+    { 
+        id: 48, 
+        src: "Admin_pages web_dashboard sallers manegments page.png", 
+        title: "سجل التدقيق والمراجعة", 
+        phase: "phase12", 
+        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
+        apis: [
+            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
+            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
+        ], 
+        models: ["AuditLog", "AdminAction"], 
+        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
+    },
+   
+    { 
+        id: 49, 
+        src: "Admin_pages web_dashboard listings manegments page.png", 
+        title: "سجل التدقيق والمراجعة", 
+        phase: "phase12", 
+        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
+        apis: [
+            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
+            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
+        ], 
+        models: ["AuditLog", "AdminAction"], 
+        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
+    }
     
 ];
 let currentPhaseFilter = "all";
