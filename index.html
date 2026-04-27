@@ -154,37 +154,8 @@ const screensDB = [
         flow: "يقوم المشرف بمراقبة جميع صفقات الشراء، تحديث الحالات يدويًا عند الضرورة، عرض التقارير، وإدارة النزاعات أو الاستردادات." 
     },
    
-    { 
-        id: 42, 
-        src: "Admin_pages web_dashboard admin login page.png.jpeg", 
-        title: "تحليلات وإحصائيات المشتريات", 
-        phase: "phase12", 
-        desc: "لوحة تحليلية متكاملة للمبيعات اليومية، الشهرية، وأفضل البائعين والمنتجات", 
-        apis: [
-            { method: "GET", path: "/admin/analytics/sales/", desc: "تحليلات المبيعات اليومية/الشهرية/السنوية" },
-            { method: "GET", path: "/admin/analytics/top-sellers/", desc: "أفضل البائعين حسب المبيعات" },
-            { method: "GET", path: "/admin/analytics/top-animals/", desc: "الحيوانات الأكثر مبيعًا" },
-            { method: "GET", path: "/admin/analytics/revenue/", desc: "تقرير الإيرادات مع الضرائب والعمولات" }
-        ], 
-        models: ["AnalyticsReport", "Commande", "Paiement", "VendeurCommission"], 
-        flow: "يتم احتساب الإحصائيات تلقائيًا من قاعدة البيانات وعرضها برسوم بيانية تفاعلية للمشرف." 
-    },
    
-    { 
-        id: 43, 
-        src: "Admin_pages web_dashboard admin otp verificaiton page.png.jpeg", 
-        title: "إدارة الاستردادات والنزاعات", 
-        phase: "phase12", 
-        desc: "مراقبة طلبات الاسترداد، النزاعات بين البائع والمشتري، واتخاذ القرارات الإدارية", 
-        apis: [
-            { method: "GET", path: "/admin/disputes/", desc: "قائمة جميع النزاعات المفتوحة" },
-            { method: "POST", path: "/admin/disputes/{id}/resolve/", desc: "حل النزاع لصالح طرف" },
-            { method: "POST", path: "/admin/refunds/approve/", desc: "الموافقة على طلب استرداد" },
-            { method: "POST", path: "/admin/refunds/reject/", desc: "رفض طلب استرداد" }
-        ], 
-        models: ["Dispute", "RefundRequest", "Commande"], 
-        flow: "يتيح للمشرف متابعة النزاعات، التواصل مع الأطراف، وإصدار أحكام استرداد الأموال إذا لزم الأمر." 
-    },
+   
    
     { 
         id: 44, 
@@ -201,47 +172,12 @@ const screensDB = [
         flow: "المشرف يختار مجموعة من الطلبات > إجراء جماعي > تطبيق التغيير." 
     },
    
-    { 
-        id: 45, 
-        src: "Admin_pages web_dashboard listings manegments page.png", 
-        title: "سجل التدقيق والمراجعة", 
-        phase: "phase12", 
-        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
-        apis: [
-            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
-            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
-        ], 
-        models: ["AuditLog", "AdminAction"], 
-        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
-    },
+    
+ 
    
-    { 
-        id: 46, 
-        src: "Admin_pages web_dashboard payments manegments page.png", 
-        title: "سجل التدقيق والمراجعة", 
-        phase: "phase12", 
-        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
-        apis: [
-            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
-            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
-        ], 
-        models: ["AuditLog", "AdminAction"], 
-        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
-    },
    
-    { 
-        id: 47, 
-        src: "Admin_pages web_dashboard preperation and buchers manegments page.png", 
-        title: "سجل التدقيق والمراجعة", 
-        phase: "phase12", 
-        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
-        apis: [
-            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
-            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
-        ], 
-        models: ["AuditLog", "AdminAction"], 
-        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
-    },
+   
+   
    
     { 
         id: 48, 
@@ -257,19 +193,7 @@ const screensDB = [
         flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
     },
    
-    { 
-        id: 49, 
-        src: "Admin_pages web_dashboard listings manegments page.png", 
-        title: "سجل التدقيق والمراجعة", 
-        phase: "phase12", 
-        desc: "تتبع جميع التغييرات التي أجرها المشرفون على المشتريات وأذونات النظام", 
-        apis: [
-            { method: "GET", path: "/admin/audit-logs/", desc: "عرض سجل التعديلات" },
-            { method: "GET", path: "/admin/audit-logs/{id}/", desc: "تفاصيل تدقيق محددة" }
-        ], 
-        models: ["AuditLog", "AdminAction"], 
-        flow: "كل عملية تعديل على حالة الشراء أو النزاع تسجل تلقائيًا مع وقت التنفيذ واسم المشرف." 
-    }
+
     
 ];
 let currentPhaseFilter = "all";
